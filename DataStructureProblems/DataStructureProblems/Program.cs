@@ -13,45 +13,47 @@ namespace DataStructureProblems
         {
             //var a = new SubrectangleQueries(null);
             var leetCodeProblems = new LeetCodeProblems();
+            //var b = new int[3][] { new int[4] { 3, 3, 1, 1 }, new int[4] { 2, 2,1,2 }, new int[4] { 1, 1, 1, 2 } };
+            var a = leetCodeProblems.MinPairSum_1877(new int[] { 5, 2, 1, 1, 4, 4, 1, 2, 1, 5 });
             //var a = leetCodeProblems.GroupThePeople(new int[6] { 2, 1, 3, 3, 3, 2 });
-            TreeNode listNode2 = new TreeNode()
-            {
-                val = 6,
-                left = new TreeNode()
-                {
-                    val = 7,
-                    right = new TreeNode
-                    {
-                        val = 7,
-                        right = new TreeNode
-                        {
-                            val = 4
-                        }
-                    },
-                    left = new TreeNode
-                    {
-                        val = 2
-                    }
-                },
-                right = new TreeNode()
-                {
-                    val = 8,
-                    left = new TreeNode()
-                    {
-                        val = 1,
-                    },
-                    right = new TreeNode
-                    {
-                        val = 3,
-                        right = new TreeNode
-                        {
-                            val = 5,
-                        }
-                    }
+            //TreeNode listNode2 = new TreeNode()
+            //{
+            //    val = 6,
+            //    left = new TreeNode()
+            //    {
+            //        val = 7,
+            //        right = new TreeNode
+            //        {
+            //            val = 7,
+            //            right = new TreeNode
+            //            {
+            //                val = 4
+            //            }
+            //        },
+            //        left = new TreeNode
+            //        {
+            //            val = 2
+            //        }
+            //    },
+            //    right = new TreeNode()
+            //    {
+            //        val = 8,
+            //        left = new TreeNode()
+            //        {
+            //            val = 1,
+            //        },
+            //        right = new TreeNode
+            //        {
+            //            val = 3,
+            //            right = new TreeNode
+            //            {
+            //                val = 5,
+            //            }
+            //        }
 
-                }
-            };
-            var a = leetCodeProblems.SumEvenGrandparent(listNode2);
+            //    }
+            //};
+            //var a = leetCodeProblems.SumEvenGrandparent(listNode2);
             //foreach (var l in a)
             //{
             //    foreach (var s in l)
@@ -69,6 +71,9 @@ namespace DataStructureProblems
             //};
 
             //leetCodeProblems.AddTwoNumbersMedium(listNode1, listNode2);
+            var sortingAlgo = new SortingAlgorithms();
+            var array = new List<int>() { 8,9,7,9 };
+            sortingAlgo.QuickSort(array);
             Console.ReadLine();
         }
 

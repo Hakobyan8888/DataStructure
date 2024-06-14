@@ -1,12 +1,455 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace DataStructureProblems
 {
     public class LeetCodeProblems
     {
+        public int CountPairs_2824(List<int> nums, int target)
+        {
+            var result = 0;
+            for (int i = 0; i < nums.Count; i++)
+            {
+                for (int j = i + 1; j < nums.Count; j++)
+                {
+                    if (nums[i] + nums[j] < target)
+                    {
+                        result++;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public int[] SmallerNumbersThanCurrent_1365(int[] nums)
+        {
+            int[] result = new int[nums.Length];
+            for (int i = 0; i < nums.Length; i++)
+            {
+                for (int j = i + 1; j < nums.Length; j++)
+                {
+                    if (nums[i] > nums[j])
+                    {
+                        result[i]++;
+                    }
+                    else if (nums[i] < nums[j])
+                    {
+                        result[j]++;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public int MinimumSum_2160(int num)
+        {
+            var digits = new List<int>();
+            while (num > 0)
+            {
+                var digit = num % 10;
+                num /= 10;
+                if (digits.Count == 0)
+                {
+                    digits.Add(digit);
+                    continue;
+                }
+                for (int i = 0; i < digits.Count; i++)
+                {
+                    if (digits[i] >= digit)
+                    {
+                        digits.Insert(i, digit);
+                        break;
+                    }
+                    if (i == digits.Count - 1)
+                    {
+                        digits.Add(digit);
+                        break;
+                    }
+                }
+            }
+
+            var firstNum = digits[0] * 10 + digits[2];
+            var secondNum = digits[1] * 10 + digits[3];
+            int result = firstNum + secondNum;
+            return result;
+        }
+
+        public string SortSentence_1859(string s)
+        {
+            var words = s.Split(' ');
+            string[] wordsArray = new string[words.Length];
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < words.Length; i++)
+            {
+                var index = int.Parse(words[i].Last().ToString());
+                var word = words[i].Remove(words[i].Length - 1);
+                wordsArray[index - 1] = word;
+            }
+            foreach (var item in wordsArray)
+            {
+                result.Append($"{item} ");
+            }
+            result.Remove(result.Length - 1, 1);
+            return result.ToString();
+        }
+
+        public int MinMovesToSeat_2037(int[] seats, int[] students)
+        {
+            var result = 0;
+            var count = seats.Length;
+            for (int i = 1; i < count; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    if (seats[i] < seats[j])
+                    {
+                        Swap(ref seats, i, j);
+                    }
+                    if (students[i] < students[j])
+                    {
+                        Swap(ref students, i, j);
+                    }
+                }
+            }
+            for (int i = 0; i < count; i++)
+            {
+                result += Math.Abs(seats[i] - students[i]);
+            }
+            return result;
+        }
+
+        public int MaxProductDifference_1913(int[] nums)
+        {
+            var result = 0;
+
+            for (int i = 1; i < nums.Length; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    if (nums[i] < nums[j])
+                    {
+                        Swap(ref nums, i, j);
+                    }
+                }
+            }
+
+            result = (nums[nums.Length - 1] * nums[nums.Length - 2]) - (nums[0] * nums[1]);
+            return result;
+        }
+
+        public int MaxProduct_1464(int[] nums)
+        {
+            var result = int.MinValue;
+            for (int i = 0; i < nums.Length; i++)
+            {
+                for (int j = i + 1; j < nums.Length; j++)
+                {
+                    var value = (nums[i] - 1) * (nums[j] - 1);
+                    if (value > result)
+                    {
+                        result = value;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public int[][] SortTheStudents_2545(int[][] score, int k)
+        {
+            for (int i = 1; i < score.Length; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    if (score[i][k] > score[j][k])
+                    {
+                        var temp = score[i];
+                        score[i] = score[j];
+                        score[j] = temp;
+                    }
+                }
+            }
+            return score;
+        }
+
+        public int MaxWidthOfVerticalArea_1637(int[][] points)
+        {
+            var result = 0;
+            //for (int i = 1; i < points.Length; i++)
+            //{
+            //    for (int j = 0; j < i; j++)
+            //    {
+            //        if (points[i][0] < points[j][0])
+            //        {
+            //            var temp = points[i];
+            //            points[i] = points[j];
+            //            points[j] = temp;
+            //        }
+            //    }
+            //}
+            points = QuickSort(points, 0, points.Length);
+            for (int i = 0; i < points.Length - 1; i++)
+            {
+                var val = points[i + 1][0] - points[i][0];
+                result = val > result ? val : result;
+            }
+            return result;
+        }
+
+        private int[][] QuickSort(int[][] points, int low, int high)
+        {
+            if (low < high)
+            {
+                var pivot = Partition(ref points, low, high);
+
+                QuickSort(points, low, pivot);
+                QuickSort(points, pivot + 1, high);
+            }
+            return points;
+        }
+
+        private int Partition(ref int[][] points, int low, int high)
+        {
+            var pivot = low;
+            var pivotPosition = low;
+
+            for (int i = low + 1; i < high; i++)
+            {
+                if (points[pivot][0] > points[i][0])
+                {
+                    pivotPosition++;
+                    var temp1 = points[i];
+                    points[i] = points[pivotPosition];
+                    points[pivotPosition] = temp1;
+                }
+            }
+            var temp = points[pivotPosition];
+            points[pivotPosition] = points[pivot];
+            points[pivot] = temp;
+            return pivotPosition;
+        }
+
+        public int[][] DiagonalSort_1329(int[][] mat)
+        {
+            int[][] result = new int[mat.Length][];
+            PriorityQueue<int, int> priorityQueue = new PriorityQueue<int, int>();
+            for (int i = 0; i < mat.Length; i++)
+            {
+                for (int j = 0; j < mat[i].Length; j++)
+                {
+                    priorityQueue.Enqueue(mat[i][j], mat[i][j]);
+                }
+            }
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = new int[mat[i].Length];
+            }
+
+            int index = 0;
+            while (priorityQueue.Count > 0)
+            {
+                for (int j = index; j < result[index].Length; j++)
+                {
+                    result[index][j] = priorityQueue.Dequeue();
+                }
+                for (int i = index + 1; i < mat.Length; i++)
+                {
+                    result[i][index] = priorityQueue.Dequeue();
+                }
+                index++;
+            }
+            return result;
+        }
+
+
+        public int[][] AcceptedDiagonalSort_1329(int[][] mat)
+        {
+
+            var rowLength = mat.Length;
+            var columnLength = mat[0].Length;
+
+            for (int i = 0; i < rowLength; i++)
+            {
+                var list = new List<int>();
+                var r = i;
+                var c = 0;
+                while (r < rowLength && c < columnLength)
+                {
+                    list.Add(mat[r][c]);
+                    r++;
+                    c++;
+                }
+
+                CountingSort(ref list);
+
+                r = i;
+                c = 0;
+                while (r < rowLength && c < columnLength)
+                {
+                    mat[r][c] = list[c];
+                    r++;
+                    c++;
+                }
+            }
+            for (int i = 0; i < columnLength; i++)
+            {
+                var list = new List<int>();
+                var c = i;
+                var r = 0;
+                while (r < rowLength && c < columnLength)
+                {
+                    list.Add(mat[r][c]);
+                    r++;
+                    c++;
+                }
+
+                CountingSort(ref list);
+
+                c = i;
+                r = 0;
+                while (r < rowLength && c < columnLength)
+                {
+                    mat[r][c] = list[r];
+                    r++;
+                    c++;
+                }
+            }
+
+
+
+            return mat;
+        }
+
+        public void CountingSort(ref List<int> array)
+        {
+            int[] count = new int[1000];
+            foreach (var item in array)
+            {
+                count[item]++;
+            }
+
+            var index = 0;
+            for (int i = 0; i < count.Length; i++)
+            {
+                for (int j = 0; j < count[i]; j++)
+                {
+                    array[index++] = i;
+                }
+            }
+
+            foreach (var item in array)
+            {
+                Console.Write($"{item}, ");
+            }
+        }
+
+
+        public IList<bool> CheckArithmeticSubarrays_1630(int[] nums, int[] l, int[] r)
+        {
+            List<bool> result = new List<bool>();
+            var queryCount = l.Length;
+
+            for (int i = 0; i < queryCount; i++)
+            {
+                int[] newArray = new int[r[i] - l[i] + 1];
+                var index = 0;
+                for (int j = l[i]; j < r[i] + 1; j++)
+                {
+                    newArray[index] = nums[j];
+                    index++;
+                }
+                result.Add(SortAndCheckIsArithmetic(newArray));
+            }
+
+            return result;
+        }
+
+        private bool SortAndCheckIsArithmetic(int[] array)
+        {
+            var arithmeticDifference = 0;
+            for (int i = 0; i < array.Length; i++)
+            {
+                var minIndex = i;
+                for (int j = i + 1; j < array.Length; j++)
+                {
+                    if (array[j] < array[minIndex])
+                    {
+                        minIndex = j;
+                    }
+                }
+                Swap(ref array, minIndex, i);
+                if (i == 1)
+                {
+                    arithmeticDifference = array[i] - array[i - 1];
+                }
+                else if (i > 0 && array[i] - array[i - 1] != arithmeticDifference)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public int MinPairSum_1877(int[] nums)
+        {
+
+            nums = QuickSort(nums, 0, nums.Length);
+
+            var maxValue = int.MinValue;
+            int j = nums.Length - 1;
+            for (int i = 0; i < nums.Length / 2; i++)
+            {
+                var sum = nums[i] + nums[j];
+                if (sum > maxValue)
+                {
+                    maxValue = sum;
+                }
+                j--;
+            }
+            return maxValue;
+        }
+
+        private int[] QuickSort(int[] array, int low, int high)
+        {
+            if (low < high)
+            {
+                var pivot = Partition(ref array, low, high);
+
+                QuickSort(array, low, pivot);
+                QuickSort(array, pivot + 1, high);
+            }
+            return array;
+        }
+
+        private int Partition(ref int[] array, int low, int high)
+        {
+            var pivot = low;
+            var pivotPosition = low;
+
+            for (int i = low + 1; i < high; i++)
+            {
+                if (array[i] < array[pivot])
+                {
+                    pivotPosition++;
+                    Swap(ref array, i, pivotPosition);
+                }
+            }
+            Swap(ref array, pivot, pivotPosition);
+            return pivotPosition;
+        }
+
+        private void Swap(ref int[] array, int indexI, int indexJ)
+        {
+            if (indexI == indexJ) return;
+            var indexIValue = array[indexI];
+            array[indexI] = array[indexJ];
+            array[indexJ] = indexIValue;
+        }
+
         public void AddTwoNumbersMedium(ListNode l1, ListNode l2)
         {
             var a = AddTwoLinkedLists(l1, l2);
